@@ -1,0 +1,71 @@
+import pandas as pd
+import numpy as np 
+import seaborn as sns
+from sklearn import svm
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.model_selection import train_test_split
+
+
+data = pd.read_csv("Gender.csv.csv")
+data.head()
+
+
+data.describe()
+
+
+gender = LabelEncoder()
+data['Gender'] = gender.fit_transform(data['Gender'])
+
+
+
+data
+
+
+bins = (-1,0,1,2,3,4,5)
+health = ['malnounished','underweight', 'fit', 'slightly overweight', 'overweight', 'extremely overweight']
+data['Index'] = pd.cut(data['Index'], bins = bins, labels = health)
+
+
+
+data['Index']
+
+
+
+data['Index'].value_counts()
+
+sns.countplot(data['Index'])
+sns.relplot(x='Height', y='Weight', hue='Index', data=data)
+sns.relplot(x='Gender', y='Weight', hue='Index', data=data)
+sns.relplot(x='Gender', y='Weight', hue='Index', data=data)
+
+
+
+x = data.drop('Index', axis=1)
+y = data['Index']
+
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 0)
+
+
+s = StandardScaler()
+x_train = s.fit_transform(x_train)
+x_test = s.transform(x_test)
+
+
+clf = svm.SVC()
+clf.fit(x_train,y_train)
+pred = clf.predict(x_test)
+
+
+print(classification_report(y_test,pred))
+
+
+print(confusion_matrix(y_test, pred))
+
+print(accuracy_score(y_test, pred))
+
+a = [[1, 174, 96]]
+a = s.transform(a)
+b = clf.predict(a)
+
